@@ -1,0 +1,12 @@
+# Ignore model files
+*.pt
+*.pth
+*.onnx
+
+# Ignore pdf files
+assets/pdf/
+*.pdf 
+
+# Ignore model folders
+assets/models/content/
+assets/models/metadata/
