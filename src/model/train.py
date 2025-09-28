@@ -1,43 +1,57 @@
+import argparse
 from ultralytics import YOLO
 
-def train_metadata_model():
-    model = YOLO("yolov8m.pt") 
+
+def train_model(model_architecture: str, data_dir: str, name: str, batch: int, device):
+    model = YOLO(f"{model_architecture}.pt")
     results = model.train(
-        data="./dataset/metadata/data.yaml", 
+        data=f"{data_dir}/data.yaml",
         epochs=500,
         patience=20,
-        batch=32,
+        batch=batch,
         imgsz=640,
         save=True,
-        device=[0, 1],
+        device=device,
         workers=8,
         project="./assets/models",
-        name="metadata_yolov8m",
+        name=name,
         classes=[0, 1],
         close_mosaic=False,
         lr0=1e-4,
-        )
+    )
     return results
 
-def train_content_model():
-    model = YOLO("yolov8m.pt") 
-    results = model.train(
-        data="./dataset/content/data.yaml", 
-        epochs=500,
-        patience=20,
-        batch=16,
-        imgsz=640,
-        save=True,
-        device=0,
-        workers=8,
-        project="./assets/models",
-        name="content_yolov8m",
-        classes=[0, 1],
-        close_mosaic=False,
-        lr0=1e-4,
-        )
-    return results
 
 if __name__ == "__main__":
-    yolov8m_metadata = train_metadata_model()
-    yolov8m_content = train_content_model()
+    parser = argparse.ArgumentParser(description="Train YOLOv8 models")
+
+    parser.add_argument(
+        "-a", "--model_architecture", type=str, default="yolov8m",
+        help="YOLO model architecture (e.g., yolov8n, yolov8s, yolov8m, yolov8l, yolov8x)"
+    )
+    parser.add_argument(
+        "-t", "--model_type", type=str, choices=["metadata", "content"], required=True,
+        help="Select training mode: metadata or content"
+    )
+    parser.add_argument(
+        "-d", "--data_dir", type=str, required=True,
+        help="Path to dataset directory containing data.yaml"
+    )
+    args = parser.parse_args()
+
+    if args.model_type == "metadata":
+        yolov8_metadata = train_model(
+            args.model_architecture,
+            args.data_dir,
+            name=f"metadata_{args.model_architecture}",
+            batch=32,
+            device=[0, 1],
+        )
+    elif args.model_type == "content":
+        yolov8_content = train_model(
+            args.model_architecture,
+            args.data_dir,
+            name=f"content_{args.model_architecture}",
+            batch=16,
+            device=0,
+        )

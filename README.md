@@ -57,10 +57,24 @@ assets/data/
 
 ---
 
-### 2. Model Training
+### 2. Automated Labeling
+
+- **Label Dataset:**  
+  After process data, run `label_dataset.py` to automatically label all subfolders in `./assets/data` using the trained model.
+
+- **Roboflow Upload:**  
+  Upload the labeled data to Roboflow for further inspection or validation. Download data from Roboflow, unzip and save in `./dataset` directory.
+
+---
+
+### 3. Model Training
 
 - **Training:**  
   Use `train.py` to train model on the prepared dataset.
+
+  - -a is model architecture: yolov8m, yolov8l, etc
+  - -t is model type: metadata, content
+  - -d is direct path to file `data.yaml` saved in `./dataset/metadata` or `./dataset/content`
 
 - **Add Layers:**  
   If need to modify the model architecture, use the `add_layers_metadata_model.py` and `add_layers_content_model.py`.
@@ -68,38 +82,32 @@ assets/data/
 
 ---
 
-### 3. Automated Labeling
-
-- **Label Dataset:**  
-  After training, run `label_dataset.py` to automatically label all subfolders in `./assets/data` using the trained model.
-
-- **Roboflow Upload:**  
-  Upload the labeled data to Roboflow for further inspection or validation.
-
----
-
 ## Example Usage
 
 ```bash
 # 1. Run template matching and configure coordinates
-python3 ./src/data/template_matching.py
+python3 src/data/template_matching.py
 
 # 2. Process images
-python3 ./src/data/image_processing.py -i <pdf_file_path>
+python3 src/data/image_processing.py -i <pdf_file_path>
 
-# 3. Train the model
-python3 ./src/model/train.py
+# 3. Label the dataset using the trained model
+python3 src/data/label_dataset.py -i ./assets/data
 
-# 4. Add layers to the model
+# 4. Upload labeled data to Roboflow for checking,
+# download and save in ./dataset/
+
+# 5. Train the model
 # Metadata model
-python3 ./src/model/add_layers_metadata_model.py
+python3 src/model/train.py -a yolov8m -t metadata -d ./dataset/metadata
 # Content model
-python3 ./src/model/add_layers_content_model.py
+python3 src/model/train.py -a yolov8m -t content -d ./dataset/content
 
-# 5. Label the dataset using the trained model
-python3 .src/data/label_dataset.py -i ./assets/data
-
-# 6. Upload labeled data to Roboflow for checking
+# 6. Add layers to the model
+# Metadata model
+python3 src/model/add_layers_metadata_model.py
+# Content model
+python3 src/model/add_layers_content_model.py
 ```
 
 ---

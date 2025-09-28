@@ -6,6 +6,12 @@
 # Ignore pdf files
 *.pdf 
 
+# Ignore data files
+*.jpg
+*.jpeg
+*.png
+*.txt
+
 # Ignore model folders
 assets/models/content/
 assets/models/metadata/
