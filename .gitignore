@@ -4,7 +4,6 @@
 *.onnx
 
 # Ignore pdf files
-assets/pdf/
 *.pdf 
 
 # Ignore model folders
